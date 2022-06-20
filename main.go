@@ -6,20 +6,24 @@ import (
 )
 
 func main() {
-	engine := dun.New()
-	engine.GET("/", func(ctx *dun.Context) {
-		ctx.HTML(http.StatusOK, "<h1>Hello Dun</h1>")
-	})
-	engine.GET("/hello", func(ctx *dun.Context) {
-		ctx.String(http.StatusOK, "hello %s, you are at %s\n", ctx.Query("name"), ctx.Path)
+	r := dun.New()
+	r.GET("/", func(c *dun.Context) {
+		c.HTML(http.StatusOK, "<h1>Hello dun</h1>")
 	})
 
-	engine.POST("/login", func(ctx *dun.Context) {
-		ctx.JSON(http.StatusOK, dun.H{
-			"username": ctx.PostForm("username"),
-			"password": ctx.PostForm("password"),
-		})
+	r.GET("/hello", func(c *dun.Context) {
+		// expect /hello?name=dunbarb
+		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
 	})
 
-	engine.Run(":9999")
+	r.GET("/hello/:name", func(c *dun.Context) {
+		// expect /hello/dunbarb
+		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Param("name"), c.Path)
+	})
+
+	r.GET("/assets/*filepath", func(c *dun.Context) {
+		c.JSON(http.StatusOK, dun.H{"filepath": c.Param("filepath")})
+	})
+
+	r.Run(":9999")
 }
