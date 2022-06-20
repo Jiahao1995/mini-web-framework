@@ -10,7 +10,7 @@ type HandlerFunc func(*Context)
 
 // Engine implements the interface of ServeHTTP
 type Engine struct {
-	router *router
+	router *Router
 }
 
 // New is the constructor of dun.Engine
